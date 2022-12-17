@@ -1,6 +1,5 @@
 package test_environment.service;
 
-import exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import test_environment.model.TestData;

@@ -7,12 +7,18 @@ plugins {
 def springVersion = '6.0.3' //
 def lombokVersion = '1.18.24'
 def junitVersion = '5.8.1'
+def mockitoVersion = '4.10.0'
+def jacksonVersion = '2.14.1'
+def hamcrestVersion = '2.2'
+def jsonpathVersion = '2.7.0'
+
 
 group 'org.example'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url "https://repo.spring.io/milestone/" }
 }
 
 dependencies {
@@ -30,9 +36,18 @@ dependencies {
             name: 'spring-test',
             version: springVersion
 
-    testImplementation 'org.mockito:mockito-core:2.1.0'
+    //
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+
+    testImplementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+
+    testImplementation "com.jayway.jsonpath:json-path:$jsonpathVersion"
+
+    testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
+
 
     // Lombok
     compileOnly "org.projectlombok:lombok:$lombokVersion"
