@@ -1,4 +1,4 @@
-package service;
+package test_environment.service;
 
 import org.springframework.stereotype.Service;
 
