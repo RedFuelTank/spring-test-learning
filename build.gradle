@@ -4,6 +4,8 @@ plugins {
 
 }
 
+def springVersion = '6.0.3' //
+
 group 'org.example'
 version '1.0-SNAPSHOT'
 
@@ -14,7 +16,14 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation group: 'org.springframework', name: 'spring-webmvc', version: '6.0.3'
+
+    implementation group: 'org.springframework',
+            name: 'spring-webmvc',
+            version: springVersion
+
+    testImplementation group: 'org.springframework',
+            name: 'spring-test',
+            version: springVersion
 }
 
 test {
