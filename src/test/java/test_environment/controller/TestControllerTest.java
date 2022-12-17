@@ -1,7 +1,5 @@
 package test_environment.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,16 +10,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import test_environment.model.TestData;
 import test_environment.service.TestService;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
+import static config.StandardTestConfig.getObjectMapperHttpMessageConverter;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.equalTo;
-import static config.StandardTestConfig.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 class TestControllerTest {
     private RequestBuilder requestBuilder;
     private TestService service;
@@ -102,6 +101,86 @@ class TestControllerTest {
                         .andExpect(jsonPath("$.name", equalTo(DATA_NAME)));
             }
 
+        }
+    }
+
+    @Nested
+    @DisplayName("Find all data elements from database")
+    class FindAll {
+
+        @Test
+        @DisplayName("Should return the HTTP status 200")
+        void shouldReturnHttpStatusOk() throws Exception {
+            requestBuilder.findAll()
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("Should return HTTP response with JSON media-type")
+        void shouldReturnCorrectMethodType() throws Exception {
+            requestBuilder.findAll()
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        }
+
+        @Nested
+        @DisplayName("When no elements are found")
+        class WhenNoElementsAreFound {
+            @BeforeEach
+            void returnEmptyList() {
+                given(service.findAll())
+                        .willReturn(Collections.emptyList());
+            }
+
+            @Test
+            @DisplayName("Should return empty list")
+            void shouldReturnEmptyList() throws Exception {
+                requestBuilder.findAll()
+                        .andExpect(jsonPath("$", hasSize(0)));
+            }
+        }
+
+        @Nested
+        @DisplayName("When 2 elements are found")
+        class When2ElementsAreFound {
+            private static final Long FIRST_ELEMENT_ID = 1L;
+            private static final String FIRST_ELEMENT_NAME = "First";
+
+            private static final Long SECOND_ELEMENT_ID = 2L;
+            private static final String SECOND_ELEMENT_NAME = "Second";
+
+
+            @BeforeEach
+            void returnListWith2Elements() {
+                given(service.findAll()).willReturn(
+                        List.of(
+                                new TestData(FIRST_ELEMENT_ID, FIRST_ELEMENT_NAME),
+                                new TestData(SECOND_ELEMENT_ID, SECOND_ELEMENT_NAME)
+                        )
+                );
+            }
+
+            @Test
+            @DisplayName("Should return list which contains 2 elements")
+            void shouldReturn2Elements() throws Exception {
+                requestBuilder.findAll()
+                        .andExpect(jsonPath("$", hasSize(2)));
+            }
+
+            @Test
+            @DisplayName("Should return first element with correct data")
+            void shouldReturnCorrectFirstElement() throws Exception {
+                requestBuilder.findAll()
+                        .andExpect(jsonPath("$[0].id", equalTo(FIRST_ELEMENT_ID.intValue())))
+                        .andExpect(jsonPath("$[0].name", equalTo(FIRST_ELEMENT_NAME)));
+            }
+
+            @Test
+            @DisplayName("Should return second element with correct data")
+            void shouldReturnCorrectSecondElement() throws Exception {
+                requestBuilder.findAll()
+                        .andExpect(jsonPath("$[1].id", equalTo(SECOND_ELEMENT_ID.intValue())))
+                        .andExpect(jsonPath("$[1].name", equalTo(SECOND_ELEMENT_NAME)));
+            }
         }
     }
 }

@@ -16,6 +16,10 @@ public class RequestBuilder {
         return mockMvc.perform(get("/data/{id}", id));
     }
 
+    public ResultActions findAll() throws Exception {
+        return mockMvc.perform(get("/data"));
+    }
+
     public ResultActions initialState() throws Exception {
         return mockMvc.perform(get("/home"));
     }

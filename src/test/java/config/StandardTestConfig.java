@@ -3,7 +3,7 @@ package config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-public final class StandardTestConfig implements TestConfig {
+public final class StandardTestConfig {
     private StandardTestConfig() {}
 
     public static ObjectMapper getObjectMapper() {

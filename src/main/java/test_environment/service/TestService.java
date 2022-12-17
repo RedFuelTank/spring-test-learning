@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import test_environment.model.TestData;
 import test_environment.repository.TestRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,5 +19,9 @@ public class TestService {
 
     public Optional<TestData> findById(Long id) {
         return repository.getById(id);
+    }
+
+    public List<TestData> findAll() {
+        return repository.findAll();
     }
 }
